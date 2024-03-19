@@ -24,6 +24,9 @@ model = AutoEncoder(INPUT_DIM, H_DIM, Z_DIM).to(DEVICE)
 model.load_state_dict(torch.load(MODEL_PATH))
 model.eval()
 
+ADD_NOISE_TO_INPUT = False
+ADD_NOISE_TO_HIDDEN = False
+
 
 def inference(digit, no_of_examples=1):
     """
@@ -33,14 +36,26 @@ def inference(digit, no_of_examples=1):
     """
     for x, y in dataset:
         if y == digit:
+            input_image = x.resize(1, 28, 28)
+            input_image_path = Path(f"{RESULTS_DIR}/input_image_digit_{digit}.jpg")
+            save_image(input_image, input_image_path)
+            print(f"Input image saved to - {input_image_path}")
+
+            if ADD_NOISE_TO_INPUT:
+                epsilon = torch.rand_like(x) * 0.5
+                x = x + epsilon
+                noisy_input_image = x.resize(1, 28, 28)
+                noisy_input_image_path = Path(f"{RESULTS_DIR}/noisy_input_image_digit_{digit}.jpg")
+                save_image(noisy_input_image, noisy_input_image_path)
+
             hidden = model.encode(x.view(1, 784))
             break
     else:
         raise AssertionError(f"Digit {digit} not found in dataset")
 
     for i in range(no_of_examples):
-        epsilon = torch.rand_like(hidden)
-        out = model.decode(hidden + epsilon)
+        epsilon = torch.rand_like(hidden) * 0.5
+        out = model.decode(hidden + epsilon) if ADD_NOISE_TO_HIDDEN else model.decode(hidden)
         output = out.view(-1, 1, 28, 28)
         image_path = Path(f"{RESULTS_DIR}/image_digit_{digit}_example_{i + 1}.jpg")
         save_image(output, image_path)
