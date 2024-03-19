@@ -20,7 +20,7 @@ PATH = "saved_model/saved_model.pt"
 
 """dataset loading"""
 
-dataset = datasets.MNIST(root="dataset/", train=True, transform=transforms.ToTensor(), download=True)
+dataset = datasets.MNIST(root="../dataset/", train=True, transform=transforms.ToTensor(), download=True)
 train_loader = DataLoader(dataset=dataset, batch_size=BATCH_SIZE, shuffle=True)
 model = VariationalAutoEncoder(INPUT_DIM, H_DIM, Z_DIM).to(DEVICE)
 optimizer = optim.Adam(model.parameters(), lr=LR_RATE)
