@@ -5,6 +5,10 @@ Reference implementation for a variational autoencoder in Pytorch.
 
 Research Paper [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114)
 
+## Model Types
+1. Auto Encoders
+2. Variational Auto Encoders
+
 ## Install dependencies
 
 ```bash
