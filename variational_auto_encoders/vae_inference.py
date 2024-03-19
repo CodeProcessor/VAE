@@ -5,19 +5,23 @@ import torchvision.datasets as datasets
 from torchvision import transforms
 from torchvision.utils import save_image
 
-from model import VariationalAutoEncoder
+from variational_auto_encoder import VariationalAutoEncoder
 
 """Configurations"""
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 INPUT_DIM = 784
 H_DIM = 200
 Z_DIM = 20
-PATH = "saved_models/saved_model_loss_10005.pt"
+MODEL_PATH = "saved_models/saved_model_loss_10005.pt"
+RESULTS_DIR = "output"
+
+if not Path(RESULTS_DIR).exists():
+    Path(RESULTS_DIR).mkdir(parents=True, exist_ok=True)
 
 dataset = datasets.MNIST(root="../dataset/", train=True, transform=transforms.ToTensor(), download=True)
 
 model = VariationalAutoEncoder(INPUT_DIM, H_DIM, Z_DIM).to(DEVICE)
-model.load_state_dict(torch.load(PATH))
+model.load_state_dict(torch.load(MODEL_PATH))
 model.eval()
 
 
@@ -39,7 +43,7 @@ def inference(digit, no_of_examples=1):
         z = mu + sigma * epsilon
         out = model.decode(z)
         output = out.view(-1, 1, 28, 28)
-        image_path = Path(f"output/image_digit_{digit}_example_{i + 1}.jpg")
+        image_path = Path(f"{RESULTS_DIR}/image_digit_{digit}_example_{i + 1}.jpg")
         save_image(output, image_path)
         print(f"Image saved to - {image_path}")
 

@@ -1,8 +1,10 @@
+from pathlib import Path
+
 import torch
 import torchvision.datasets as datasets
 from tqdm import tqdm
 from torch import nn, optim
-from model import VariationalAutoEncoder
+from variational_auto_encoder import VariationalAutoEncoder
 from torchvision import transforms
 from torchvision.utils import save_image
 from torch.utils.data import DataLoader
@@ -16,7 +18,10 @@ Z_DIM = 20
 NUM_EPOCHS = 25
 BATCH_SIZE = 128
 LR_RATE = 3e-4  # Karpathy constant
-PATH = "saved_model/saved_model.pt"
+MODEL_DIR = Path("saved_models")
+
+if not MODEL_DIR.exists():
+    MODEL_DIR.mkdir()
 
 """dataset loading"""
 
@@ -48,7 +53,7 @@ def train():
 
     final_loss = loss.item()
     """Save model"""
-    torch.save(model.state_dict(), f"saved_models/saved_model_{NUM_EPOCHS}_epochs_loss_{final_loss:.0f}.pt")
+    torch.save(model.state_dict(), f"{MODEL_DIR}/saved_model_{NUM_EPOCHS}_epochs_loss_{final_loss:.0f}.pt")
 
 
 if __name__ == '__main__':
