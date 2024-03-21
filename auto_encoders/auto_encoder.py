@@ -29,7 +29,7 @@ class AutoEncoder(nn.Module):
 
 
 if __name__ == '__main__':
-    x = torch.randn(4, 784)  # 28x28 = 784
-    vae = VariationalAutoEncoder(input_dim=784)
-    x_bar = vae(x)
+    _x = torch.randn(4, 784)  # 28x28 = 784
+    ae = AutoEncoder(input_dim=784)
+    x_bar = ae(_x)
     print(x_bar.shape)

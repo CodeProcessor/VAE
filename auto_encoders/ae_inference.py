@@ -36,12 +36,15 @@ def inference(digit, no_of_examples=1):
     """
     for x, y in dataset:
         if y == digit:
+            x = x.to(DEVICE)
+            """Save original image"""
             input_image = x.resize(1, 28, 28)
             input_image_path = Path(f"{RESULTS_DIR}/input_image_digit_{digit}.jpg")
             save_image(input_image, input_image_path)
             print(f"Input image saved to - {input_image_path}")
 
             if ADD_NOISE_TO_INPUT:
+                """Add a noise and save the image"""
                 epsilon = torch.rand_like(x) * 0.5
                 x = x + epsilon
                 noisy_input_image = x.resize(1, 28, 28)
@@ -54,8 +57,15 @@ def inference(digit, no_of_examples=1):
         raise AssertionError(f"Digit {digit} not found in dataset")
 
     for i in range(no_of_examples):
+        """
+        Add a noise to hidden layer and decode the image
+        ------------------------------------------------
+        Since this is an AutoEncoder
+        We can't directly generate images from the hidden layer (even if we add a small noise)
+        """
         epsilon = torch.rand_like(hidden) * 0.5
         out = model.decode(hidden + epsilon) if ADD_NOISE_TO_HIDDEN else model.decode(hidden)
+        # out = model.decode(epsilon)
         output = out.view(-1, 1, 28, 28)
         image_path = Path(f"{RESULTS_DIR}/image_digit_{digit}_example_{i + 1}.jpg")
         save_image(output, image_path)
@@ -63,6 +73,6 @@ def inference(digit, no_of_examples=1):
 
 
 if __name__ == '__main__':
-    inference(1, 5)
+    inference(1, 1)
     # for d in range(1, 10):
     #     inference(d, 5)

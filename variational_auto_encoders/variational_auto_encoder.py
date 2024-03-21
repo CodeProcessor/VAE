@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class VariationalAutoEncoder(nn.Module):
     """
@@ -23,19 +24,20 @@ class VariationalAutoEncoder(nn.Module):
 
     def encode(self, x):
         """Encoder: Input img -> Hidden dim -> mean, std"""
-        h = self.relu(self.img_2hid(x))
+        h = self.relu(self.img_2hid(x)).to(DEVICE)
         mu, sigma = self.hid_2mu(h), self.hid_2sigma(h)
         return mu, sigma
 
     def decode(self, z):
         """Decoder: Parameterization trick -> Decoder -> Output img"""
-        h = self.relu(self.z_2hid(z))
+        h = self.relu(self.z_2hid(z)).to(DEVICE)
         return torch.sigmoid(self.hid_img(h))
 
     def forward(self, x):
         """Forward pass"""
         mu, sigma = self.encode(x)
-        epsilon = torch.rand_like(sigma)
+        epsilon = torch.rand_like(sigma).to(DEVICE)
+        """Re-parameterization trick"""
         z_re_parameterize = mu + sigma * epsilon
         x_reconstructed = self.decode(z_re_parameterize)
         return x_reconstructed, mu, sigma

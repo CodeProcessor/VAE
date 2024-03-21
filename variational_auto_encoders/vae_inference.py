@@ -33,7 +33,7 @@ def inference(digit, no_of_examples=1):
     """
     for x, y in dataset:
         if y == digit:
-            mu, sigma = model.encode(x.view(1, 784))
+            mu, sigma = model.encode(x.view(1, 784).to(DEVICE))
             break
     else:
         raise AssertionError(f"Digit {digit} not found in dataset")

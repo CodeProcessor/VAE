@@ -8,21 +8,23 @@ Research Paper [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114
 ## Model Types
 1. Auto Encoders
 2. Variational Auto Encoders
+3. Conditional Variational Auto Encoders
 
-## Install dependencies
+
+## How to run
+### Install dependencies
 
 ```bash
 conda env create -n vae -f environment.yml
-
 conda activate vae
 ```
 
-## Train the model
+### Train the model
 
 ```bash
 python train.py
 ```
-## Run the tests
+### Run the tests
 
 ```bash
 python inference.py
