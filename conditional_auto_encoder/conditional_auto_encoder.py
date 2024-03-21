@@ -7,7 +7,7 @@ class ConditionalVariationalAutoEncoder(nn.Module):
     Input img -> Hidden dim -> mean, std -> Parameterization trick -> Decoder -> Output img
     """
 
-    def __init__(self, input_dim, h_dim=200, z_dim=20, no_of_classes=10):
+    def __init__(self, input_dim, h_dim=200, z_dim=20, no_of_classes=10, device=torch.device("cuda")):
         super().__init__()
         """Encoder"""
         self.img_2hid = nn.Linear(input_dim, h_dim)
@@ -21,6 +21,8 @@ class ConditionalVariationalAutoEncoder(nn.Module):
         """Common"""
         self.relu = nn.ReLU()
 
+        self.device = device
+
     def encode(self, x):
         """Encoder: Input img -> Hidden dim -> mean, std"""
         h = self.relu(self.img_2hid(x))
@@ -29,7 +31,7 @@ class ConditionalVariationalAutoEncoder(nn.Module):
 
     def decode(self, z, d):
         """Decoder: Parameterization trick -> Decoder -> Output img"""
-        digit_one_hot = torch.zeros((z.shape[0], 10))
+        digit_one_hot = torch.zeros((z.shape[0], 10)).to(self.device)
         digit_one_hot[range(z.shape[0]), d] = 1
         z = torch.cat((z, digit_one_hot), dim=1)
         h = self.relu(self.z_2hid(z))
